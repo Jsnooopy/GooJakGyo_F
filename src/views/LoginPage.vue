@@ -99,6 +99,8 @@ export default{
             localStorage.setItem("token", token);
             localStorage.setItem("role", role);
             localStorage.setItem("email", email);
+
+            alert("로그인에 성공하였습니다!");
             window.location.href="/";
         },
         googleLogin(){

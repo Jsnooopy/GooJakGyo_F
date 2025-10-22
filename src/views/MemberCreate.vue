@@ -35,6 +35,24 @@
                               required
                             >
                             </v-text-field>
+                            <v-text-field 
+                              label="학교"
+                              v-model="univName"
+                              required
+                            >
+                            </v-text-field>
+                            <v-text-field 
+                              label="전공"
+                              v-model="major"
+                              required
+                            >
+                            </v-text-field>
+                            <v-text-field 
+                              label="학번"
+                              v-model="studentId"
+                              required
+                            >
+                            </v-text-field>
                             <v-btn type="submit" color="primary" block>등록</v-btn>
                         </v-form>
                     </v-card-text>
@@ -56,6 +74,9 @@ export default{
             name: "",
             email: "",
             password: "",
+            univName: "",
+            major: "",
+            studentId: "",
         }
     },
     methods:{
@@ -64,9 +85,13 @@ export default{
                 name: this.name,
                 email: this.email,
                 password: this.password,
+                univName: this.univName,
+                major: this.major,
+                studentId: this.studentId,
                 
             }
             await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/create`, data);
+            alert("회원가입이 완료되었습니다!");
             this.$router.push("/");
         }
     }

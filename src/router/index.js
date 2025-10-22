@@ -9,6 +9,7 @@ import MyChatPage from "@/views/MyChatPage.vue";
 import GoogleRedirect from "@/views/GoogleRedirect.vue";
 import KakaoRedirect from "@/views/KakaoRedirect.vue";
 import NaverRedirect from "@/views/NaverRedirect.vue";
+import OauthCreate from "@/views/OauthCreate.vue";
 
 const routes = [
     {
@@ -35,6 +36,11 @@ const routes = [
         path: '/oauth/naver/redirect',
         name: 'NaverRedirect',
         component: NaverRedirect
+    },
+    {
+        path: '/oauth/create',
+        name: 'OauthCreate',
+        component: OauthCreate
     },
     {
         path: '/member/list',
