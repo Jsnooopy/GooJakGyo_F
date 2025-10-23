@@ -6,6 +6,7 @@
 
 <script>
 import axios from "axios";
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   async created() {
@@ -27,10 +28,15 @@ export default {
         );
 
         const data = response.data;
+        const token = response.data.token;
+        const role = jwtDecode(token).role;
+        const email = jwtDecode(token).sub;
 
         // case 1: 기존 회원 → 바로 로그인
         if (data.token) {
-          localStorage.setItem("token", data.token);
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", role);
+          localStorage.setItem("email", email);
           window.location.href = "/"; // 메인 페이지로 이동
         }
 
