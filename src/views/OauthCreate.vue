@@ -24,6 +24,26 @@
                               required
                             >
                             </v-text-field>
+                            <v-select
+                              v-model="role"
+                              :items="[
+                                { value: 'MENTOR', title: '멘토' },
+                                { value: 'MENTEE', title: '멘티' }
+                              ]"
+                              label="역할 선택"
+                              required
+                            />
+                            <v-select
+                              v-model="selectedKeywords"
+                              :items="keywordOptions"
+                              label="관심 분야 선택 (중복 선택 가능)"
+                              item-title="name"
+                              item-value="id"
+                              multiple
+                              chips
+                              clearable
+                              required
+                            />
                             <v-btn type="submit" color="primary" block>등록</v-btn>
                         </v-form>
                     </v-card-text>
@@ -39,6 +59,8 @@
 
 <script>
 import axios from "axios";
+import { jwtDecode } from 'jwt-decode';
+
 
 export default {
   data() {
@@ -50,6 +72,18 @@ export default {
       univName: "",
       studentId: "",
       major: "",
+      role: "",
+      selectedKeywords: [],
+
+      keywordOptions: [
+        { id: 1, name: "VLSI·컴퓨터" },
+        { id: 2, name: "반도체·디스플레이·재료" },
+        { id: 3, name: "마이크로파·광파" },
+        { id: 4, name: "바이오" },
+        { id: 5, name: "전력·제어" },
+        { id: 6, name: "인공지능·신호처리" },
+        { id: 7, name: "통신·네트워크" },
+      ]
     };
   },
   created() {
@@ -75,12 +109,18 @@ export default {
             univName: this.univName,
             studentId: this.studentId,
             major: this.major,
+            role: this.role,
+            keywordIds: this.selectedKeywords,
         }
         
         const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/oauth/create`, oauthData);
 
         const token = response.data.token;
+        const role = jwtDecode(token).role;
+        const email = jwtDecode(token).sub;
         localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("email", email);
         sessionStorage.removeItem("socialInfo");
 
         alert("회원가입이 완료되었습니다!");

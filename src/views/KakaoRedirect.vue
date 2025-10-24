@@ -6,6 +6,7 @@
 
 <script>
 import axios from "axios";
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   async created() {
@@ -27,10 +28,16 @@ export default {
         );
 
         const data = response.data;
+        const token = data.token;
 
         // case 1: 기존 회원 → 바로 로그인
-        if (data.token) {
-          localStorage.setItem("token", data.token);
+        if (token) {
+          const role = jwtDecode(token).role;
+          const email = jwtDecode(token).sub;
+
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", role);
+          localStorage.setItem("email", email);
           window.location.href = "/"; // 메인 페이지로 이동
         }
 
@@ -50,8 +57,8 @@ export default {
         }
 
       } catch (error) {
-        console.error("구글 로그인 실패:", error);
-        alert("구글 로그인 중 오류가 발생했습니다.");
+        console.error("카카오 로그인 실패:", error);
+        alert("카카오 로그인 중 오류가 발생했습니다.");
         window.location.href = "/";
       }
     },
