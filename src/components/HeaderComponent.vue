@@ -19,24 +19,38 @@
         </v-container>
     </v-app-bar>
 </template>
+
 <script>
+import api from "@/api/axios";
+
 export default{
     data(){
         return {
             isLogin: false,
-        }
+        };
     },
-    created(){
-       const token = localStorage.getItem("token");
-       if(token){
-        this.isLogin = true;
-       }
+    async created(){
+       const accessToken = localStorage.getItem("accessToken");
+
+       if(accessToken){
+            this.isLogin = true;
+        }
     },
     methods:{
-        doLogout(){
-            localStorage.clear();
-            window.location.reload();
-        }
+        async doLogout() {
+            try {
+                const memberId = localStorage.getItem("memberId");
+
+                await api.post('/member/logout', {memberId}, {headers: {Authorization: `Bearer ${localStorage.getItem("accessToken")}`}});
+
+                localStorage.clear();
+
+                this.isLogin = false;
+                window.location.href = "/";
+            } catch (error) {
+                console.error("로그아웃 실패:", error);
+            }
+        },
     }
 }
 </script>

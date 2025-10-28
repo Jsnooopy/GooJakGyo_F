@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 export default{
     data(){
         return{
@@ -123,7 +123,7 @@ export default{
                 role: this.role,
                 keywordIds: this.selectedKeywords,
             }
-            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/create`, data);
+            await api.post('/member/create', data);
             alert("회원가입이 완료되었습니다!");
             this.$router.push("/");
         }

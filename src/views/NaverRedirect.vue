@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "@/api/axios";
 import { jwtDecode } from 'jwt-decode';
 
 export default {
@@ -22,20 +22,22 @@ export default {
   methods: {
     async sendCodeToServer(code) {
       try {
-        const response = await axios.post(
-          `${process.env.VUE_APP_API_BASE_URL}/member/naver/doLogin`,
+        const response = await api.post(
+          '/member/naver/doLogin',
           { code }
         );
 
         const data = response.data;
-        const token = data.token;
+        const accessToken = data.accessToken;
+        const memberId = response.data.memberId;
 
         // case 1: 기존 회원 → 바로 로그인
-        if (data.token) {
-          const role = jwtDecode(token).role;
-          const email = jwtDecode(token).sub;
+        if (accessToken) {
+          const role = jwtDecode(accessToken).role;
+          const email = jwtDecode(accessToken).sub;
 
-          localStorage.setItem("token", token);
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("memberId", memberId);
           localStorage.setItem("role", role);
           localStorage.setItem("email", email);
           window.location.href = "/"; // 메인 페이지로 이동

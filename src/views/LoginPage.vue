@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 import { jwtDecode } from 'jwt-decode';
 
 export default{
@@ -92,11 +92,15 @@ export default{
                 email:this.email,
                 password:this.password
             }
-            const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/doLogin`, loginData);
-            const token = response.data.token;
-            const role = jwtDecode(token).role;
-            const email = jwtDecode(token).sub;
-            localStorage.setItem("token", token);
+            const response = await api.post(`/member/doLogin`, loginData);
+            const accessToken = response.data.accessToken;
+            const memberId = response.data.memberId;
+
+            const role = jwtDecode(accessToken).role;
+            const email = jwtDecode(accessToken).sub;
+            
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("memberId", memberId);
             localStorage.setItem("role", role);
             localStorage.setItem("email", email);
 

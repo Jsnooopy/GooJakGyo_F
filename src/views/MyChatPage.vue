@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 export default{
     data(){
         return {
@@ -45,7 +45,7 @@ export default{
         }
     },
     async created(){
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/chat/my/rooms`);
+        const response = await api.get('/chat/my/rooms');
         this.chatList = response.data;
     },
     methods: {
@@ -53,7 +53,7 @@ export default{
             this.$router.push(`/chatpage/${roomId}`);
         },
         async leaveChatRoom(roomId){
-            await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/chat/room/group/${roomId}/leave`);
+            await api.delete(`/chat/room/group/${roomId}/leave`);
             this.chatList = this.chatList.filter(chat => chat.roomId !== roomId);
         }
     },

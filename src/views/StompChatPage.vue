@@ -35,7 +35,7 @@
 <script>
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
-import axios from 'axios';
+import api from '@/api/axios';
 
 export default{
     data(){
@@ -43,7 +43,7 @@ export default{
             messages: [],
             newMessage: "",
             stompClient: null,
-            token: "",
+            accessToken: "",
             senderEmail: null,
             roomId: null
         }
@@ -51,7 +51,7 @@ export default{
     async created(){
         this.senderEmail = localStorage.getItem("email");
         this.roomId = this.$route.params.roomId;
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/chat/history/${this.roomId}`);
+        const response = await api.get(`/chat/history/${this.roomId}`);
         this.messages = response.data;
         this.connectWebsocket();
     },
@@ -72,16 +72,16 @@ export default{
             const sockJs = new SockJS(`${process.env.VUE_APP_API_BASE_URL}/connect`)
             this.stompClient = Stomp.over(sockJs);
 
-            this.token = localStorage.getItem("token");
+            this.accessToken = localStorage.getItem("accessToken");
             this.stompClient.connect({
-                Authorization: `Bearer ${this.token}`
+                Authorization: `Bearer ${this.accessToken}`
             },
                 () => {
                     this.stompClient.subscribe(`/topic/${this.roomId}`, (message) => {
                         const parseMessage = JSON.parse(message.body);
                         this.messages.push(parseMessage);
                         this.scrollToBottom();
-                    }, {Authorization: `Bearer ${this.token}`})
+                    }, {Authorization: `Bearer ${this.accessToken}`})
                 }
             )
         },
@@ -101,7 +101,7 @@ export default{
             })
         },
         async disconnectWebSocket(){
-            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/chat/room/${this.roomId}/read`);
+            await api.post(`/chat/room/${this.roomId}/read`);
             if(this.stompClient && this.stompClient.connected){
                 this.stompClient.unsubscribe(`/topic/${this.roomId}`);
                 this.stompClient.disconnect();

@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 export default{
     data(){
         return {
@@ -74,17 +74,17 @@ export default{
     },
     methods: {
         async joinChatRoom(roomId){
-            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/chat/room/group/${roomId}/join`);
+            await api.post(`/chat/room/group/${roomId}/join`);
             this.$router.push(`/chatpage/${roomId}`);
         },
         async createChatRoom(){
-            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/chat/room/group/create?roomName=${this.newRoomTitle}`, null);
+            await api.post(`/chat/room/group/create?roomName=${this.newRoomTitle}`, null);
             this.showCreateRoomModal = false;
             this.loadChatRoom();
             
         },
         async loadChatRoom(){
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/chat/room/group/list`);
+            const response = await api.get('/chat/room/group/list');
             this.chatRoomList = response.data;
         }
     },

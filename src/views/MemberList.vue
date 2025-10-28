@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 export default{
     data(){
         return {
@@ -136,8 +136,8 @@ export default{
         }
     },
     async created(){
-        const mentorResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member/list/mentor`);
-        const menteeResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member/list/mentee`);
+        const mentorResponse = await api.get('/member/list/mentor');
+        const menteeResponse = await api.get('/member/list/mentee');
 
         this.mentorList = mentorResponse.data;
         this.menteeList = menteeResponse.data;
@@ -145,14 +145,14 @@ export default{
     methods: {
         async startChat(otherMemberId){
             // 기존 채팅방이 있으면 return, 없으면 새로 생성된 roomId return
-            const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/chat/room/private/create?otherMemberId=${otherMemberId}`);
+            const response = await api.post(`/chat/room/private/create?otherMemberId=${otherMemberId}`);
             const roomId = response.data;
             this.$router.push(`/chatpage/${roomId}`);
         },
         async viewProfile(memberId) {
             try {
-                const response = await axios.get(
-                `${process.env.VUE_APP_API_BASE_URL}/member/${memberId}`
+                const response = await api.get(
+                `/member/${memberId}`
                 );
                 this.selectedMember = response.data;
                 this.profileDialog = true;
