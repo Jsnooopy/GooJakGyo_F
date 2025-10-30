@@ -35,11 +35,13 @@ export default {
         if (accessToken) {
           const role = jwtDecode(accessToken).role;
           const email = jwtDecode(accessToken).sub;
+          const name = jwtDecode(accessToken).name;
 
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("memberId", memberId);
           localStorage.setItem("role", role);
           localStorage.setItem("email", email);
+          localStorage.setItem("name", name);
           window.location.href = "/"; // 메인 페이지로 이동
         }
 

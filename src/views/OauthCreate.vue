@@ -119,10 +119,13 @@ export default {
         const memberId = response.data.memberId;
         const role = jwtDecode(accessToken).role;
         const email = jwtDecode(accessToken).sub;
+        const name = jwtDecode(accessToken).name;
+        
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("memberId", memberId);
         localStorage.setItem("role", role);
         localStorage.setItem("email", email);
+        localStorage.setItem("name", name);
         sessionStorage.removeItem("socialInfo");
 
         alert("회원가입이 완료되었습니다!");

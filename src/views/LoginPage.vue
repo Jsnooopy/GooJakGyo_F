@@ -96,6 +96,7 @@ export default{
             const accessToken = response.data.accessToken;
             const memberId = response.data.memberId;
 
+            const name = jwtDecode(accessToken).name;
             const role = jwtDecode(accessToken).role;
             const email = jwtDecode(accessToken).sub;
             
@@ -103,6 +104,7 @@ export default{
             localStorage.setItem("memberId", memberId);
             localStorage.setItem("role", role);
             localStorage.setItem("email", email);
+            localStorage.setItem("name", name);
 
             alert("로그인에 성공하였습니다!");
             window.location.href="/";

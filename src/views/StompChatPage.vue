@@ -1,35 +1,39 @@
 <template>
-    <v-container>
-        <v-row justify="center">
-            <v-col cols="12" md="8">
-                <v-card>
-                    <v-card-title class="text-center text-h5">
-                        채팅
-                    </v-card-title>
-                    <v-card-text>
-                        <div class="chat-box">
-                            <div 
-                             v-for="(msg, index) in messages"
-                             :key="index"
-                             :class="['chat-message', msg.senderEmail === this.senderEmail ? 'sent' : 'received']"
-                            >
-                                <strong>{{ msg.senderEmail }}: </strong> {{ msg.message }}
-                            </div>
-                        </div>
-                        <v-text-field
-                            v-model="newMessage"
-                            label="메시지 입력"
-                            @keyup.enter="sendMessage"
-                        />
-                        <v-btn color="primary" block @click="sendMessage">전송</v-btn>
-                    </v-card-text>
-                </v-card>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" md="8">
+        <v-card>
+          <v-card-title class="text-center text-h5">
+            채팅
+          </v-card-title>
 
-            </v-col>
+          <v-card-text>
+            <div class="chat-box">
+              <div 
+                v-for="(msg, index) in messages"
+                :key="index"
+                :class="['chat-message', msg.senderEmail === senderEmail ? 'sent' : 'received']"
+              >
+                <div class="sender-info">
+                  <strong>{{ msg.senderName }}</strong> ({{ msg.senderEmail }})
+                </div>
+                <div class="message-text">
+                  {{ msg.message }}
+                </div>
+              </div>
+            </div>
 
-        </v-row>
-
-    </v-container>
+            <v-text-field
+              v-model="newMessage"
+              label="메시지 입력"
+              @keyup.enter="sendMessage"
+            />
+            <v-btn color="primary" block @click="sendMessage">전송</v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -44,12 +48,14 @@ export default{
             newMessage: "",
             stompClient: null,
             accessToken: "",
+            senderName: null,
             senderEmail: null,
             roomId: null
         }
     },
     async created(){
         this.senderEmail = localStorage.getItem("email");
+        this.senderName = localStorage.getItem("name");
         this.roomId = this.$route.params.roomId;
         const response = await api.get(`/chat/history/${this.roomId}`);
         this.messages = response.data;
@@ -89,6 +95,7 @@ export default{
             if(this.newMessage.trim() === "")return;
             const message = {
                 senderEmail: this.senderEmail,
+                senderName: this.senderName, // this.senderName을 다른 데서 지정해줘야 함
                 message: this.newMessage
             }
             this.stompClient.send(`/publish/${this.roomId}`, JSON.stringify(message));
