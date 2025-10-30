@@ -95,8 +95,8 @@ export default{
             const response = await api.post(`/member/doLogin`, loginData);
             const accessToken = response.data.accessToken;
             const memberId = response.data.memberId;
+            const name = response.data.name;
 
-            const name = jwtDecode(accessToken).name;
             const role = jwtDecode(accessToken).role;
             const email = jwtDecode(accessToken).sub;
             

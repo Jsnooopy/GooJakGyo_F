@@ -30,13 +30,12 @@ export default {
         const data = response.data;
         const accessToken = data.accessToken;
         const memberId = response.data.memberId;
+        const name = response.data.name;
 
         // case 1: 기존 회원 → 바로 로그인
         if (accessToken) {
           const role = jwtDecode(accessToken).role;
           const email = jwtDecode(accessToken).sub;
-          const name = jwtDecode(accessToken).name;
-          
 
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("memberId", memberId);

@@ -117,10 +117,11 @@ export default {
 
         const accessToken = response.data.accessToken;
         const memberId = response.data.memberId;
+        const name = response.data.name;
+
         const role = jwtDecode(accessToken).role;
         const email = jwtDecode(accessToken).sub;
-        const name = jwtDecode(accessToken).name;
-        
+
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("memberId", memberId);
         localStorage.setItem("role", role);
