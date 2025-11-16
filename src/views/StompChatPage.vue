@@ -59,6 +59,8 @@ export default{
         this.roomId = this.$route.params.roomId;
         const response = await api.get(`/chat/history/${this.roomId}`);
         this.messages = response.data;
+
+        this.readMessage(); // 방에 입장하면 모든 메시지 읽음 처리
         this.connectWebsocket();
     },
     // 사용자가 현재 라우트에서 다른 라우트로 이동하려고 할 때 호출되는 훅 함수
@@ -87,6 +89,7 @@ export default{
                         const parseMessage = JSON.parse(message.body);
                         this.messages.push(parseMessage);
                         this.scrollToBottom();
+                        this.readMessage();
                     }, {Authorization: `Bearer ${this.accessToken}`})
                 }
             )
@@ -100,6 +103,9 @@ export default{
             }
             this.stompClient.send(`/publish/${this.roomId}`, JSON.stringify(message));
             this.newMessage = ""
+        },
+        async readMessage() { // 상대방이 메시지 보내면 바로 읽음처리 됨 (방에 있다면)
+          await api.post(`/chat/room/${this.roomId}/read`);
         },
         scrollToBottom(){
             this.$nextTick(()=>{

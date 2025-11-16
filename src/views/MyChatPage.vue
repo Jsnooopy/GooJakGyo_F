@@ -41,14 +41,53 @@ import api from '@/api/axios';
 export default{
     data(){
         return {
-            chatList: []
+            chatList: [],
+            eventSource: null,
+            memberId: null
         }
     },
     async created(){
+        this.memberId = localStorage.getItem("memberId");
         const response = await api.get('/chat/my/rooms');
         this.chatList = response.data;
+
+        // SSE 연결
+        this.connectSSE();
     },
+
+    beforeUnmount() {
+        if(this.eventSource) {
+            this.eventSource.close();
+        }
+    },
+
     methods: {
+        connectSSE() {
+            // SSE 구독
+            this.eventSource = new EventSource(
+                `${process.env.VUE_APP_API_BASE_URL}/api/sse/subscribe/${this.memberId}`
+            );
+
+            // SSE 연결 성공시
+            this.eventSource.addEventListener("connect", (event) => {
+                console.log("SSE connected:", event.data);
+            });
+
+            // 새로운 메시지 발생 이벤트
+            this.eventSource.addEventListener("new-message", (event) => {
+                const {roomId, unReadCount} = JSON.parse(event.data);
+
+                console.log("새 메시지 도착 - roomId: ", roomId, "안 읽은 메시지 개수: ", unReadCount);
+
+                // 해당 채팅방 unreadCount 즉시 증가
+                const target = this.chatList.find(r => r.roomId === roomId);
+                if (target) {
+                    target.unReadCount = unReadCount;
+                }
+            });
+
+        },
+
         enterChatRoom(roomId){
             this.$router.push(`/chatpage/${roomId}`);
         },
